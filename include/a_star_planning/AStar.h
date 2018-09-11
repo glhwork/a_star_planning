@@ -11,6 +11,12 @@ struct Lattice {
   double _y;
   double _z;
   bool _check;
+
+  int _row;
+  int _col;
+
+  double _f;
+  double _g;
 };  // struct Lattice
 
 typedef std::vector<Lattice> LatVec;
@@ -19,13 +25,16 @@ class AStar {
  public:
     AStar();
     ~AStar() { }
-    LatVec PathFind(const Eigen::Vector3d position);
-    Lattice ClosestPoint(const Eigen::Vector3d position);
+    LatVec PathFind(const Eigen::Vector3d &position,
+                    const Eigen::Vector3d &goal);
+    Lattice ClosestPoint(const Eigen::Vector3d &position);
     void MapInit();
 
-private:
-  Eigen::Matrix<Lattice, 200, 100> _points;
-  std::vector<Lattice> path;     
+ private:
+  Lattice _points[200][100];
+  int lattice_row;
+  int lattice_col;
+  std::vector<Lattice> _path;     
 };  // class AStar
 
 }  // namespace astar
