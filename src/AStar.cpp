@@ -12,12 +12,11 @@ astar::AStar::AStar() {
 astar::LatVec astar::AStar::PathFind(const Eigen::Vector3d& position, 
                                      const Eigen::Vector3d& goal) {
 
-  astar::Lattice goal_point, path_point;
-  path_point = ClosestPoint(position);
+  astar::Lattice goal_point, path_point, start_point;
+  start_point = ClosestPoint(position);
   goal_point = ClosestPoint(goal);
+  path_point = start_point;
   _points[path_point._row][path_point._col]._check = true;
-  _path.push_back(path_point);
-
   
   astar::Lattice tmp_point;
   double min_f;
@@ -44,17 +43,48 @@ astar::LatVec astar::AStar::PathFind(const Eigen::Vector3d& position,
     path_point = tmp_point;
     path_point._check = true;
     _points[path_point._row][path_point._col]._check = true;
-    // std::cout << path_point._x << "  "
-    //           << path_point._y << "  "
-    //           << path_point._z << std::endl;
 
-    _path.push_back(path_point);
     if (path_point._x == goal_point._x && 
         path_point._y == goal_point._y) {
       goal_point._check = true;
     }
 
-  }  // while loop end
+  }  // searching loop end
+
+  bool finish_find = false;
+  path_point = goal_point;
+  _points[path_point._row][path_point._col]._check = false;
+  while (!finish_find) {
+
+    double min_g = 1000000.0;
+    for (size_t i = path_point._row - 1; i < path_point._row + 2; i++) {
+      for (size_t j = path_point._col - 1; j < path_point._col + 2; j++) {
+
+        if (_points[i][j]._check and
+            (i != path_point._row or 
+             j != path_point._col)) {
+
+          double g = DisFind(start_point, _points[i][j]);
+          if (g < min_g) {
+            min_g = g;
+            tmp_point = _points[i][j];
+          } 
+
+        }
+      }
+    }
+
+    _path.push_back(tmp_point);
+    path_point = tmp_point;
+    _points[path_point._row][path_point._col]._check = false;
+
+    if (path_point._x == start_point._x &&
+        path_point._y == start_point._y &&
+        path_point._z == start_point._z) {
+      finish_find = true;
+    }
+
+  }  // finding shortest path end
   return _path;
 }
 
