@@ -119,7 +119,7 @@ astar::Lattice astar::AStar::ClosestPoint(const Eigen::Vector3d& position) {
   }
   return closest_point;
   
-}
+}  // find the nearest point on the map
 
 void astar::AStar::MapInit() {
 
@@ -142,7 +142,7 @@ void astar::AStar::MapInit() {
   }
 
 
-}
+}  // create a map in matrix form
 
 double astar::AStar::DisFind(const Lattice& x, const Lattice& y) {
 
